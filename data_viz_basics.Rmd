@@ -51,9 +51,148 @@ We will be using three fun datasets from [Kaggle](https://www.kaggle.com), a dat
 
 ## Loading packages and data
 
-We will use only the **ggplot2** package in this tutorial. Use the `read.csv()` function from base R to read in each of the three datasets.
+We will use only the **ggplot2** package in this tutorial. Use the `read.csv()` function from base R to read in each of the three datasets from the URL where they are hosted on GitHub.
 
 ```{r}
 library(ggplot2)
+
+wines <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/1000wines.csv')
+WHR <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/WHR_2015.csv')
+cereal <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/cereal.csv')
 ```
 
+You can use the `head()` function to look at the first few lines of each dataset.
+
+## Our first ggplot
+
+Let's start with a simple scatter plot. We will use the `WHR` dataset and plot happiness score on the *y* axis versus happiness rank on the *x* axis.
+
+```{r}
+ggplot(data = WHR)
+```
+
+This doesn't do anything so far. We've only specified the dataset to get the plotting data from, without saying which columns of the dataset will be mapped to which graphical elements. 
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score))
+```
+
+Once we add the *x* and *y* mappings, we now can see the two axes and coordinate system, but no data yet. We haven't added any `geom` layers.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + geom_point()
+```
+
+By adding a `geom_point()` layer to the plotting code, we have now made a scatterplot!
+
+> Notice we use `+` to add each new piece of the plotting code.
+
+## Modifying the plot: changing the geom
+
+We can modify the plot in many ways. One way is by changing the `geom`. This will plot the same data but using a different type of plot. For example we might want to connect data points with lines instead of drawing them as separate points. For that we will replace `geom_point()` with `geom_line()`.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + geom_line()
+```
+
+We can add multiple `geom`s if we want.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
+  geom_line() +
+  geom_point()
+```
+
+Now we have a line plot with a point plot overlaid on top. The `geom`s are drawn in the order they are added to the plot.
+
+> Notice I have put each piece on its own line. This makes the code much easier to read especially if you are making a complex plot with dozens of lines of code.
+
+## Modifying the plot: changing the aes
+
+If we change the `aes` arguments, we will change what data are used to plot. For example let's add a `color` aesthetic to the point plot to color each country's point by world region.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score, color = Region)) + 
+  geom_point()
+```
+
+We automatically get a legend.
+
+If we have multiple `geom`s, we can add an `aes` argument to only one of them. For example if we want a black line with colored points on top, we add `aes(color = Region)` inside `geom_point()`.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
+  geom_line() +
+  geom_point(aes(color = Region))
+```
+
+If we add arguments to the `geom`s outside `aes()`, it will modify their appearance without mapping back to the data. For example we might want bigger points that are shaped like triangles. That is not mapping back to any part of the original data, it is just a modification to the look of the plot.
+
+```{r}
+ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
+  geom_line() +
+  geom_point(aes(color = Region), size = 2, shape = 'triangle')
+```
+
+> The default for `geom_point` is `size = 1`.
+
+## Modifying the plot: changing the theme
+
+We can add a theme to the plot. Themes are ways to change the 
+
+```{r}
+triangleplot <- ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
+  geom_line() +
+  geom_point(aes(color = Region), size = 2, shape = 'triangle')
+
+triangleplot + theme_bw()
+```
+
+The `theme_bw()` function changes the default theme to a black-and-white theme.
+
+> Note that here I demonstrate that we can assign the result of `ggplot()` to an object, in this case `triangleplot`. It does not print the plot yet. Then when I type `triangleplot` again and add a theme to it, it prints.
+
+You can set a global theme for all plots created in your current R session by using `theme_set()`. I will do this now so we don't have to look at the ugly gray default theme!
+
+```{r}
+theme_set(theme_bw())
+```
+
+We can use the `theme()` function to add specific theme arguments to a plot. For instance we can move the legend to the bottom of the plot, remove the gridlines, and change the appearance of different text elements.
+
+```{r}
+triangleplot +
+  theme(panel.grid = element_blank(),
+        legend.position = 'bottom',
+        axis.text = element_text(color = 'black', size = 14),
+        axis.title = element_text(face = 'bold', size = 16))
+```
+
+## Boxplots
+
+Let's switch to a different dataset: the `cereal` dataset.  We can use `geom_boxplot()` for that.
+
+```{r}
+ggplot(cereal, aes(x = manufacturer, y = sugars)) +
+  geom_boxplot()
+```
+
+```{r}
+ggplot(cereal, aes(x = manufacturer, y = sugars)) +
+  geom_dotplot()
+```
+
+# Conclusion
+
+What did we just learn?
+
+## Going further
+
+We've only scratched the surface of **ggplot2** in this lesson.
+
+- More advanced tutorials
+- Huge number of add-on packages that extend ggplot2 (show a few examples)
+  + ggthemes and other themes
+  + specialty kinds of plots like ggalluvial
+  + maps (sf integrates with ggplot2)
+  + animations
