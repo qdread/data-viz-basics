@@ -12,22 +12,28 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This is a 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Learning objectives
 
-```{r cars}
-summary(cars)
-```
+At the end of this course, you will know ...
 
-## Including Plots
+- what the "grammar of graphics" is and how **ggplot2** uses it
+- how to map a variable in a data frame to a graphical element in a plot using `aes`
+- how to use different `geom`s to make scatterplots, boxplots, and histograms
+- how to add trendlines to a plot
+- how to make plots for different subsets of your data using `facet`s
+- how to change the style and appearance of your plots
 
-You can also embed plots, for example:
+# What is the grammar of graphics?
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+# How does a ggplot work?
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+- data
+- aesthetic mappings
+- one or more geoms (layers)
+- scales
+- themes
+
