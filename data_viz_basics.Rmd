@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is a 
 
+Students should already have a beginner-level knowledge of R, including basic knowledge of functions and syntax, and awareness of how data frames in R work.
+
 ## Learning objectives
 
 At the end of this course, you will know ...
@@ -27,13 +29,31 @@ At the end of this course, you will know ...
 - how to make plots for different subsets of your data using `facet`s
 - how to change the style and appearance of your plots
 
-# What is the grammar of graphics?
+## What is the grammar of graphics?
 
-# How does a ggplot work?
+## How does a ggplot work?
 
 - data
 - aesthetic mappings
 - one or more geoms (layers)
 - scales
 - themes
+
+## The data
+
+We will be using three fun datasets from [Kaggle](https://www.kaggle.com), a data science competition site where users upload public domain datasets. Click on each link if you want to learn more about each dataset, including descriptions of each column.
+
+- [Wine reviews posted on winemag.com in 2017](https://www.kaggle.com/datasets/zynicide/wine-reviews). *I've given you only the first 1000 rows of this dataset.*
+- [World Happiness Report 2015](https://www.kaggle.com/datasets/unsdsn/world-happiness)
+- [Nutritional values of 77 brands of cereal](https://www.kaggle.com/datasets/crawford/80-cereals)
+
+# The code
+
+## Loading packages and data
+
+We will use only the **ggplot2** package in this tutorial. Use the `read.csv()` function from base R to read in each of the three datasets.
+
+```{r}
+library(ggplot2)
+```
 
