@@ -13,13 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <!-- TO DO
+- better description of grammar of graphics
 - disambiguation of geom and stat
 - maybe more on stat and summary functions
+- add info on how to get help, such as stackoverflow or the rstudio community forums
 -->
 
 # Introduction
 
-This is a lesson introducing you to making plots with the R package **ggplot2**. The **ggplot2** package was originally developed by Hadley Wickham and is now developed and maintained by a huge team of data visualization experts. It's an elegant and powerful way of visualizing your data and works great for everything from quick exploratory plots to carefully formatted publication-quality graphics.
+This is a lesson introducing you to making plots with the R package **ggplot2**. The **ggplot2** package was originally developed by [Hadley Wickham](hadley.nz) and is now developed and maintained by a huge team of data visualization experts. It's an elegant and powerful way of visualizing your data and works great for everything from quick exploratory plots to carefully formatted publication-quality graphics.
 
 Students should already have a beginner-level knowledge of R, including basic knowledge of functions and syntax, and awareness of how data frames in R work.
 
@@ -37,17 +39,25 @@ At the end of this course, you will know ...
 
 ## What is the grammar of graphics?
 
+The theory underlying **ggplot2** is the "grammar of graphics." This concept was originally introduced by Leland Wilkinson in a [landmark book](https://link.springer.com/book/10.1007/0-387-28695-0). It's a formal way of mapping variables in a dataset to graphical elements of a plot. For example, you might have a dataset with age, weight, sex, and population of many individuals. You could make a scatterplot where the age variable in the data maps to the x axis of the dataset, the weight variable maps to the y axis, the sex variable maps to the color of the points, and the population variable maps to the shape of the points. 
+
+In the grammar of graphics, a plot is built in a modular way. We start with data, map variables to visual elements called `geom`s, and then optionally modify the coordinate system and scales like axes and color gradients. We can also modify the visual appearance of the plot in ways that don't map back to the data, but just make the plot look better.
+
+If that doesn't make sense to you, read on to see how this is implemented in **ggplot2**.
+
 ## How does a ggplot work?
 
-- data
-- aesthetic mappings
-- one or more geoms (layers)
-- scales
-- themes
+These images are taken from the [ggplot2 cheatsheet](https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf). I recommend downloading this cheatsheet and keeping it handy -- it's a great reference!
+
+**ggplot2** uses the grammar of graphics to build up all plots from the same set of building blocks. You specify which variables in the data correspond to which visual properties (aesthetics) of the things that are being plotted (geoms).
+
+In practice, that looks like this:
+
+As you can see we at least need data, a mapping of variables to visual properties (called `aes`), and one or more `geom` layers. Optionally, we can add coordinate system transformations, scale transformations, facets to split the plot into groups, and themes to change the plot appearance. We will cover all of this (other than coordinate transformation) in this intro lesson. 
 
 ## The data
 
-We will be using three fun datasets from [Kaggle](https://www.kaggle.com), a data science competition site where users upload public domain datasets. Click on each link if you want to learn more about each dataset, including descriptions of each column.
+In this lesson we'll use three fun datasets from [Kaggle](https://www.kaggle.com), a data science competition site where users upload public domain datasets. Click on each link if you want to learn more about each dataset, including descriptions of each column.
 
 - [World Happiness Report 2015](https://www.kaggle.com/datasets/unsdsn/world-happiness)
 - [Nutritional values of 77 brands of cereal](https://www.kaggle.com/datasets/crawford/80-cereals)\
@@ -411,9 +421,6 @@ If you don't specify a plot object, it will write the last ggplot you plotted in
 ggsave('~/plots/my_plot.pdf', height = 4, width = 4)
 ```
 
-## How to get help
-
-
 ## Going further
 
 ### Extension packages
@@ -460,22 +467,27 @@ ggboxplot(data = WHR, x = 'Continent', y = 'Happiness.Score', color = 'Continent
   geom_bracket(xmin = 'Americas', xmax = 'Africa', label = '*', y.position = 7.7, label.size = 8)
 ```
 
-
 #### The list goes on ...
 
 Check out the official [ggplot2 extensions page](https://exts.ggplot2.tidyverse.org/) to browse a full list.
 
 # Conclusion
 
-What did we just learn?
+What did we just learn? Let's revisit the learning objectives!
 
-- How to make scatterplots, 
-- How to map variables in your dataset to 
+- what the "grammar of graphics" is and how **ggplot2** uses it
+- how to map a variable in a data frame to a graphical element in a plot using `aes`
+- how to use different `geom`s to make scatterplots, boxplots, histograms, density plots, and barplots
+- how to add trendlines to a plot
+- how to compute summary statistics and plot them with `stat` functions
+- how to make plots for different subsets of your data using `facet`s
+- how to change the style and appearance of your plots
+
+Take the time to pat yourself on the back for making it this far. Now get out there and visualize some data!
   
 ### Further reading
 
 - [ggplot2 homepage](https://ggplot2.tidyverse.org/)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/): This is the "official" book on **ggplot2**, written by the package developers. It explains the underlying theory of grammar of graphics and thoroughly documents all the features.
-- http://www.cookbook-r.com/Graphs/
-- https://r-graph-gallery.com/ggplot2-package.html
+- [R Graph Gallery ggplot2 page](https://r-graph-gallery.com/ggplot2-package.html): huge collection of **ggplot2** examples with the code to produce each one
 - [ggplot2 chapter in the book *R for Data Science*](https://r4ds.had.co.nz/graphics-for-communication.html)
