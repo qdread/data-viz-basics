@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - disambiguation of geom and stat
 - maybe more on stat and summary functions
 - add info on how to get help, such as stackoverflow or the rstudio community forums
+- add exercises
 -->
 
 # Introduction
@@ -39,7 +40,7 @@ At the end of this course, you will know ...
 
 ## What is the grammar of graphics?
 
-The theory underlying **ggplot2** is the "grammar of graphics." This concept was originally introduced by Leland Wilkinson in a [landmark book](https://link.springer.com/book/10.1007/0-387-28695-0). It's a formal way of mapping variables in a dataset to graphical elements of a plot. For example, you might have a dataset with age, weight, sex, and population of many individuals. You could make a scatterplot where the age variable in the data maps to the x axis of the dataset, the weight variable maps to the y axis, the sex variable maps to the color of the points, and the population variable maps to the shape of the points. 
+The theory underlying **ggplot2** is the "grammar of graphics." This concept was originally introduced by Leland Wilkinson in a [landmark book](https://link.springer.com/book/10.1007/0-387-28695-0). It's a formal way of mapping variables in a dataset to graphical elements of a plot. For example, you might have a dataset with age, weight, and sex of many individuals. You could make a scatterplot where the age variable in the data maps to the x axis of the dataset, the weight variable maps to the y axis, and the sex variable maps to the color of the points. 
 
 In the grammar of graphics, a plot is built in a modular way. We start with data, map variables to visual elements called `geom`s, and then optionally modify the coordinate system and scales like axes and color gradients. We can also modify the visual appearance of the plot in ways that don't map back to the data, but just make the plot look better.
 
@@ -51,7 +52,11 @@ These images are taken from the [ggplot2 cheatsheet](https://posit.co/wp-content
 
 **ggplot2** uses the grammar of graphics to build up all plots from the same set of building blocks. You specify which variables in the data correspond to which visual properties (aesthetics) of the things that are being plotted (geoms).
 
+![](https://github.com/qdread/data-viz-basics/raw/main/images/ggplot_cheatsheet_1.png)
+
 In practice, that looks like this:
+
+![](https://github.com/qdread/data-viz-basics/raw/main/images/ggplot_cheatsheet_2.png)
 
 As you can see we at least need data, a mapping of variables to visual properties (called `aes`), and one or more `geom` layers. Optionally, we can add coordinate system transformations, scale transformations, facets to split the plot into groups, and themes to change the plot appearance. We will cover all of this (other than coordinate transformation) in this intro lesson. 
 
@@ -81,7 +86,7 @@ You can use the `head()`, `summary()`, or `str()` functions to examine each data
 
 ## Our first ggplot
 
-Let's start with a simple scatterplot. Does money buy happiness? We will find out. THe `WHR` dataset has a row for each country. We will make a scatterplot with plotting GDP per capita on the *x* axis and happiness score on the *y* axis.
+Let's start with a simple scatterplot. Does money buy happiness? We will find out. The `WHR` dataset has a row for each country. We will make a scatterplot with plotting GDP per capita on the *x* axis and happiness score on the *y* axis.
 
 Start by calling the `ggplot()` function with the `data` argument saying which data frame contains the plotting data.
 
@@ -89,11 +94,15 @@ Start by calling the `ggplot()` function with the `data` argument saying which d
 ggplot(data = WHR)
 ```
 
-This doesn't do anything so far. We've only specified the dataset to get the plotting data from, without saying which columns of the dataset will be mapped to which graphical elements. 
+### Add aesthetic mapping
+
+That didn't do anything so far. We've only specified the dataset to get the plotting data from, without saying which columns of the dataset will be mapped to which graphical elements. 
 
 ```{r}
 ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score))
 ```
+
+### Add a geom layer
 
 Once we add the *x* and *y* mappings, we now can see the two axes and coordinate system, which is already set to the range of each variable, but no data yet. We haven't added any `geom` layers.
 
@@ -423,13 +432,11 @@ ggsave('~/plots/my_plot.pdf', height = 4, width = 4)
 
 ## Going further
 
-### Extension packages
-
 We've only scratched the surface of **ggplot2** in this lesson. 
 
 The **ggplot2** package itself doesn't support every possible kind of data visualization. But because R packages are all open-source and anyone can contribute his or her own package, there is a very diverse "ecosystem" of extension packages people have written as add-ons to **ggplot2**. We don't have time to get into any of them in detail right now. Here are a few examples of extension packages and some bits of code showing them in action. I encourage you to explore them more!
 
-#### ggthemes
+### ggthemes
 
 This is a package that includes a bunch of themes you can add to your plot to spiff up its appearance. Here I use it to draw our sugar histogram plot in the style of *The Economist*, FiveThirtyEight.com, and the personal style of data visualization expert Edward Tufte.
 
@@ -441,7 +448,7 @@ sugar_hist + theme_fivethirtyeight()
 sugar_hist + theme_tufte()
 ```
 
-#### gghighlight
+### gghighlight
 
 This package has functions that allow us to highlight outliers or other specific bits of our data automatically. For example let's go back to our happiness versus GDP plot and highlight the "happiest" and "saddest" countries, complete with labels.
 
@@ -453,7 +460,7 @@ ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) +
   gghighlight(Happiness.Score < 3 | Happiness.Score > 7.55, label_key = Country, label_params = list(size = 5))
 ```
 
-#### ggpubr
+### ggpubr
 
 This package tries to streamline the process of formatting plots to make them publication-ready with simplified functions. For example, we can make a pretty boxplot of happiness score by continent with the raw data added as jittered points, without having to specify all the `geom`s. We can even add specific "significant" comparisons to the plot with connecting lines. Let's assume in this case that the Americas and Europe had significantly greater happiness score than Africa, but no other pairwise comparisons showed significant differences.
 
@@ -467,7 +474,7 @@ ggboxplot(data = WHR, x = 'Continent', y = 'Happiness.Score', color = 'Continent
   geom_bracket(xmin = 'Americas', xmax = 'Africa', label = '*', y.position = 7.7, label.size = 8)
 ```
 
-#### The list goes on ...
+### The list goes on ...
 
 Check out the official [ggplot2 extensions page](https://exts.ggplot2.tidyverse.org/) to browse a full list.
 
@@ -485,7 +492,7 @@ What did we just learn? Let's revisit the learning objectives!
 
 Take the time to pat yourself on the back for making it this far. Now get out there and visualize some data!
   
-### Further reading
+## Further reading
 
 - [ggplot2 homepage](https://ggplot2.tidyverse.org/)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/): This is the "official" book on **ggplot2**, written by the package developers. It explains the underlying theory of grammar of graphics and thoroughly documents all the features.
