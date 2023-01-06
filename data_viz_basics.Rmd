@@ -402,7 +402,7 @@ ggplot(olympics_best, aes(x = Medal, fill = Medal)) +
 
 ## Writing your ggplot to a file
 
-You can use the `ggsave()` function to write your plot to a file. `ggsave()` will automatically determine the file type based on the extension on the file name. It will also set the size and resolution of the image by default.
+You can use the `ggsave()` function to write your plot to a file. `ggsave()` will automatically determine the file type based on the extension on the file name. It will also set the size and resolution of the image by default. (Note this example assumes there is a folder called `plots` in your home directory.)
 
 ```{r, eval = FALSE}
 # Not run
@@ -498,3 +498,7 @@ Take the time to pat yourself on the back for making it this far. Now get out th
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/): This is the "official" book on **ggplot2**, written by the package developers. It explains the underlying theory of grammar of graphics and thoroughly documents all the features.
 - [R Graph Gallery ggplot2 page](https://r-graph-gallery.com/ggplot2-package.html): huge collection of **ggplot2** examples with the code to produce each one
 - [ggplot2 chapter in the book *R for Data Science*](https://r4ds.had.co.nz/graphics-for-communication.html)
+
+# Exercises
+
+Coming soon!

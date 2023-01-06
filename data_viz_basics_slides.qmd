@@ -15,7 +15,7 @@ execute:
 - Good for everything from quick exploratory plots to carefully formatted publication-quality graphics
 - This lesson assumes beginner-level knowledge of R (functions, data frames)
 
-## Learning objectives
+## Learning objectives {.smaller}
 
 At the end of this course, you will know ...
 
@@ -182,7 +182,7 @@ ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) +
   geom_smooth(method = lm, se = FALSE, color = 'black')
 ```
 
-> The default for `geom_point` is `size = 1`.
+> The default for `geom_point` is `size = 1`
 
 ---
 
@@ -230,20 +230,33 @@ happy_gdp_plot
 
 ### Modifying the plot: changing scales
 
-Scales can be used to modify the ways in which the data are mapped to the graphics appearing on the plot. For example, you can add scales to a plot to modify the range, breaks, and labels of the *x* and *y* axes, or the color palette used to color the points. You can optionally add a scale for each `aes` mapping in your plot.
+- Scales modify how data are mapped to graphics 
+- For example, change the range, breaks, and labels of the *x* and *y* axes
+- Or change the color palette used to color the points
+- You can optionally add a scale for each `aes` mapping in your plot
 
-Here I will add scales for the `x`, `y`, and `color` aesthetics one at a time.
+---
+
+- Add x scale with a title and specific labeled breaks
 
 ```{r}
 happy_gdp_plot +
   scale_x_continuous(name = 'GDP per capita', breaks = c(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5))
 ```
 
+---
+
+- Add y scale with a title and specific range
+
 ```{r}
 happy_gdp_plot +
   scale_x_continuous(name = 'GDP per capita', breaks = c(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5)) +
   scale_y_continuous(name = 'happiness score', limits = c(2, 8))
 ```
+
+--- 
+
+- Change the color palette for continents
 
 ```{r}
 happy_gdp_plot +
@@ -256,21 +269,28 @@ happy_gdp_plot +
 
 ## Boxplots
 
-Another common plot type is the boxplot. We can plot the happiness score data on the y-axis again, but instead of a continuous x-axis, we will use continent as a discrete or categorical x-axis. A boxplot is a useful way to visualize distributions grouped by discrete categories. The function we need is `geom_boxplot()`.
+- Visualize distributions grouped by discrete categories
+- `geom_boxplot()` to see distribution of happiness by continent
 
 ```{r}
 ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
   geom_boxplot()
 ```
 
-We can modify the boxplots in different ways. First let's fill them with a nice color, change the black outlines to a dark gray, and make all the lines thicker (`size = 1.5` where the default is 1).
+---
+
+- Modify appearance of boxplots
+- Fill color (`fill`), line color (`color`), line thickness (`size = 1.5` where the default is 1)
 
 ```{r}
 ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
   geom_boxplot(fill = 'forestgreen', color = 'gray25', size = 1.5)
 ```
 
-We can also modify the outlier points, here I make them bigger and 70% transparent (`alpha` ranges between 0 for fully transparent and 1 for fully opaque).
+---
+
+- Modify the outlier points
+- Bigger (`outlier.size = 2`) and 70% transparent (`outlier.alpha = 0.7`)
 
 ```{r}
 ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
@@ -280,21 +300,30 @@ ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
 
 ## Histograms and density plots
 
-Let's switch to a different dataset: the `cereal` dataset. Let's look at the distribution of grams of sugar per serving in each type of breakfast cereal (the `sugars` column). We only have one variable now so we only need to map an `x` aesthetic. The `y` value will be computed internally by `ggplot()`.
+- Now using the `cereal` dataset
+- Distribution of grams of sugar per serving in each type of breakfast cereal (`sugars`)
+- We only need to map an `x` aesthetic
+- `y` value computed internally by `ggplot()`
 
 ```{r}
 ggplot(data = cereal, aes(x = sugars)) +
   geom_histogram()
 ```
 
-We can modify this histogram in many ways. For instance let's reduce the number of bins to 10 from the default value of 30 to get a histogram with fewer gaps. 
+---
+
+- Reduce the number of bins to 10 (default is 30) 
 
 ```{r}
 ggplot(data = cereal, aes(x = sugars)) +
   geom_histogram(bins = 10)
 ```
 
-By default, the y axis has a small gap between the highest and lowest value and the edge of the plot. That is great for scatterplots but doesn't look good for histograms. We can change this by adding a y axis scale with an `expand` argument.
+---
+
+- By default, the y axis has a small gap between the highest and lowest value and the edge of the plot
+- Great for scatterplots but doesn't look good for histograms
+- Change this by adding a y axis scale with an `expand` argument
 
 ```{r}
 ggplot(data = cereal, aes(x = sugars)) +
@@ -302,9 +331,12 @@ ggplot(data = cereal, aes(x = sugars)) +
   scale_y_continuous(expand = expansion(add = c(0, 1)))
 ```
 
-I used `expansion(add = c(0, 1))` to indicate I wanted to add 0 units of padding at the low end of the axis, and 1 unit at the high end.
+- `expansion(add = c(0, 1))` indicates 0 units of padding at the low end of the axis, and 1 unit at the high end
 
-Now I am going to change the fill color of the histogram bars, and add a title and subtitle to the plot with the `ggtitle()` function.
+---
+
+- Change the fill color of the histogram bar
+- Add a title and subtitle to the plot with `ggtitle()`
 
 ```{r}
 sugar_hist <- ggplot(data = cereal, aes(x = sugars)) +
@@ -315,37 +347,54 @@ sugar_hist <- ggplot(data = cereal, aes(x = sugars)) +
 sugar_hist
 ```
 
-Finally we can use the `labs()` function to change the label on one or more axes without having to specify the entire scale.
+---
+
+- Use `labs()` function to change axis label(s) without having to specify the entire scale
 
 ```{r}
 sugar_hist +
   labs(x = 'sugar (g/serving)')
 ```
 
-An alternative to the histogram is a smoothed kernel density plot. Let's use the `calories` variable for that.
+---
+
+### Kernel density plot
+
+- An alternative to the histogram is a smoothed kernel density plot
+- Look at the distribution of calories per serving with a density plot
 
 ```{r}
 ggplot(data = cereal, aes(x = calories)) +
   stat_density()
 ```
 
-> Notice we used `stat_density()`. In general, functions beginning `stat_*()` will compute some summary statistic or function based on the data and plot it.
+> Functions beginning `stat_*()` will compute some summary statistic or function based on the data and plot it.
 
-To get a less squiggly density plot, we can tweak the bandwidth parameter (the `adjust` argument) of the density smoothing algorithm. The higher the `adjust` argument is set (the default is 1), the smoother the curve.
+---
+
+- Tweak the bandwidth parameter (`adjust`) of the density smoothing algorithm
+- Higher `adjust` (default is 1) gives you a smoother curve
 
 ```{r}
 ggplot(data = cereal, aes(x = calories)) +
   stat_density(adjust = 2)
 ```
 
-If we just want a line instead of a filled shape we can specify the `geom` to be used for `stat_density()`. The default is `'polygon'` but we can change it to `'line'`.
+---
+
+- We can specify the `geom` to be used for `stat_density()`
+- Default is `'polygon'` but we can change it to `'line'`
 
 ```{r}
 ggplot(data = cereal, aes(x = calories)) +
   stat_density(adjust = 2, geom = 'line')
 ```
 
-Let's improve the look of this plot by getting rid of the gaps on either end of the x-axis and below the 0 line on the y-axis, changing the width and color of the line, and adding a title for the plot and x-axis.
+---
+
+- Get rid of the gaps on either end of the x-axis and below the 0 line on the y-axis 
+- Change the width and color of the line
+- Add a title for the plot and x-axis
 
 ```{r}
 ggplot(data = cereal, aes(x = calories)) +
@@ -357,7 +406,8 @@ ggplot(data = cereal, aes(x = calories)) +
 
 ## Facets
 
-One of the most useful features of **ggplot2** is the ability to easily create multiple subplots, one for each subgroup of a dataset. Let's take a subset of the `olympics` dataset to compare the athletics performance of some of the best track-and-field nations over the years: the USA, Great Britain (GBR), the Soviet Union (URS), and Jamaica (JAM).
+- **ggplot2** can easily group data and create multiple subplots 
+- Subset of the `olympics` track and field medals dataset (four countries)
 
 ```{r}
 olympics_best <- subset(olympics, Country %in% c('USA', 'GBR', 'URS', 'JAM'))
@@ -536,7 +586,7 @@ ggboxplot(data = WHR, x = 'Continent', y = 'Happiness.Score', color = 'Continent
 
 - official [ggplot2 extensions page](https://exts.ggplot2.tidyverse.org/) 
 
-## Conclusion
+## Conclusion {.smaller}
 
 What did we just learn? Let's revisit the learning objectives!
 
