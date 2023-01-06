@@ -43,9 +43,9 @@ At the end of this course, you will know ...
 
 We will be using three fun datasets from [Kaggle](https://www.kaggle.com), a data science competition site where users upload public domain datasets. Click on each link if you want to learn more about each dataset, including descriptions of each column.
 
-- [Wine reviews posted on winemag.com in 2017](https://www.kaggle.com/datasets/zynicide/wine-reviews). *I've given you only the first 1000 rows of this dataset.*
 - [World Happiness Report 2015](https://www.kaggle.com/datasets/unsdsn/world-happiness)
-- [Nutritional values of 77 brands of cereal](https://www.kaggle.com/datasets/crawford/80-cereals)
+- [Nutritional values of 77 brands of cereal](https://www.kaggle.com/datasets/crawford/80-cereals)\
+- [Summer Olympics medals awarded in track and field (athletics) from 1896-2014](https://www.kaggle.com/datasets/the-guardian/olympic-games). *This is a subset of the original dataset*
 
 # The code
 
@@ -56,16 +56,18 @@ We will use only the **ggplot2** package in this tutorial. Use the `read.csv()` 
 ```{r}
 library(ggplot2)
 
-wines <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/1000wines.csv')
 WHR <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/WHR_2015.csv')
 cereal <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/cereal.csv')
+olympics <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/olympics.csv')
 ```
 
-You can use the `head()` function to look at the first few lines of each dataset.
+You can use the `head()`, `summary()`, or `str()` functions to examine each dataset.
 
 ## Our first ggplot
 
-Let's start with a simple scatter plot. We will use the `WHR` dataset and plot happiness score on the *y* axis versus happiness rank on the *x* axis.
+Let's start with a simple scatterplot. Does money buy happiness? We will find out. THe `WHR` dataset has a row for each country. We will make a scatterplot with plotting GDP per capita on the *x* axis and happiness score on the *y* axis.
+
+Start by calling the `ggplot()` function with the `data` argument saying which data frame contains the plotting data.
 
 ```{r}
 ggplot(data = WHR)
@@ -74,83 +76,94 @@ ggplot(data = WHR)
 This doesn't do anything so far. We've only specified the dataset to get the plotting data from, without saying which columns of the dataset will be mapped to which graphical elements. 
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score))
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score))
 ```
 
-Once we add the *x* and *y* mappings, we now can see the two axes and coordinate system, but no data yet. We haven't added any `geom` layers.
+Once we add the *x* and *y* mappings, we now can see the two axes and coordinate system, which is already set to the range of each variable, but no data yet. We haven't added any `geom` layers.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + geom_point()
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + geom_point()
 ```
 
 By adding a `geom_point()` layer to the plotting code, we have now made a scatterplot!
 
 > Notice we use `+` to add each new piece of the plotting code.
 
-## Modifying the plot: changing the geom
+### Modifying the plot: changing the geom
 
 We can modify the plot in many ways. One way is by changing the `geom`. This will plot the same data but using a different type of plot. For example we might want to connect data points with lines instead of drawing them as separate points. For that we will replace `geom_point()` with `geom_line()`.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + geom_line()
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + geom_line()
 ```
 
-We can add multiple `geom`s if we want.
+The `geom_line` doesn't make a lot of sense in this case but it is great for time series data.
+
+We can add multiple `geom`s if we want. For instance, we can plot a smoothing trendline (`geom_smooth()`) overlaid on the scatterplot.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
-  geom_line() +
-  geom_point()
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point() +
+  geom_smooth()
 ```
 
-Now we have a line plot with a point plot overlaid on top. The `geom`s are drawn in the order they are added to the plot.
+Now we have a point plot with a trendline overlaid on top. The `geom`s are drawn in the order they are added to the plot.
 
 > Notice I have put each piece on its own line. This makes the code much easier to read especially if you are making a complex plot with dozens of lines of code.
 
-## Modifying the plot: changing the aes
-
-If we change the `aes` arguments, we will change what data are used to plot. For example let's add a `color` aesthetic to the point plot to color each country's point by world region.
+By default, the `geom_smooth()` plots a locally weighted regression with standard error as a shaded area. We can change the type of trend to a linear trend by specifying `method = lm` as an argument, and get rid of the standard error shading by specifying `se = FALSE`.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score, color = Region)) + 
-  geom_point()
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
-We automatically get a legend.
+### Modifying the plot: changing the aes
 
-If we have multiple `geom`s, we can add an `aes` argument to only one of them. For example if we want a black line with colored points on top, we add `aes(color = Region)` inside `geom_point()`.
+If we add to or change the `aes` arguments, we will modify or change what data are used to plot. For example let's add a `color` aesthetic to the point plot to color each country's point by world region.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
-  geom_line() +
-  geom_point(aes(color = Region))
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score, color = Region)) + 
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
 ```
 
-If we add arguments to the `geom`s outside `aes()`, it will modify their appearance without mapping back to the data. For example we might want bigger points that are shaped like triangles. That is not mapping back to any part of the original data, it is just a modification to the look of the plot.
+We automatically get a legend. However, this also automatically groups the trendline by region as well.
+
+If we have multiple `geom`s, we can add an `aes` argument to a single `geom`. For example if we want the points to be colored by region but a single overall trendline, we add `aes(color = Region)` inside `geom_point()`.
 
 ```{r}
-ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
-  geom_line() +
-  geom_point(aes(color = Region), size = 2, shape = 'triangle')
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point(aes(color = Region)) +
+  geom_smooth(method = lm, se = FALSE)
+```
+
+If we add arguments to the `geom`s outside `aes()`, it will modify their appearance without mapping back to the data. For example we might want bigger points, and we might want the trendline to be black. That is not mapping back to any part of the original data, it is just a modification to the look of the plot.
+
+```{r}
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point(aes(color = Region), size = 2) +
+  geom_smooth(method = lm, se = FALSE, color = 'black')
 ```
 
 > The default for `geom_point` is `size = 1`.
 
-## Modifying the plot: changing the theme
+### Modifying the plot: changing the theme
 
-We can add a theme to the plot. Themes are ways to change the 
+We can add a theme to the plot. Themes change the overall look of the plot.
 
 ```{r}
-triangleplot <- ggplot(data = WHR, aes(x = Happiness.Rank, y = Happiness.Score)) + 
-  geom_line() +
-  geom_point(aes(color = Region), size = 2, shape = 'triangle')
+happy_gdp_plot <- ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point(aes(color = Region), size = 2) +
+  geom_smooth(method = lm, se = FALSE, color = 'black')
 
-triangleplot + theme_bw()
+happy_gdp_plot + theme_bw()
 ```
 
 The `theme_bw()` function changes the default theme to a black-and-white theme.
 
-> Note that here I demonstrate that we can assign the result of `ggplot()` to an object, in this case `triangleplot`. It does not print the plot yet. Then when I type `triangleplot` again and add a theme to it, it prints.
+> Note that here I demonstrate that we can assign the result of `ggplot()` to an object, in this case `happy_gdp_plot`. It does not print the plot yet. Then when I type `happy_gdp_plot` again and add a theme to it, without assigning it to an object, it prints.
 
 You can set a global theme for all plots created in your current R session by using `theme_set()`. I will do this now so we don't have to look at the ugly gray default theme!
 
@@ -161,26 +174,94 @@ theme_set(theme_bw())
 We can use the `theme()` function to add specific theme arguments to a plot. For instance we can move the legend to the bottom of the plot, remove the gridlines, and change the appearance of different text elements.
 
 ```{r}
-triangleplot +
+happy_gdp_plot <- happy_gdp_plot +
   theme(panel.grid = element_blank(),
         legend.position = 'bottom',
         axis.text = element_text(color = 'black', size = 14),
-        axis.title = element_text(face = 'bold', size = 16))
+        axis.title = element_text(face = 'bold', size = 14))
+
+happy_gdp_plot
 ```
 
-## Boxplots
+### Modifying the plot: changing scales
 
-Let's switch to a different dataset: the `cereal` dataset.  We can use `geom_boxplot()` for that.
+Scales can be used to modify the ways in which the data are mapped to the graphics appearing on the plot. For example, you can add scales to a plot to modify the range, breaks, and labels of the *x* and *y* axes, or the color palette used to color the points. You can optionally add a scale for each `aes` mapping in your plot.
+
+Here I will add scales for the `x`, `y`, and `color` aesthetics one at a time.
 
 ```{r}
-ggplot(cereal, aes(x = manufacturer, y = sugars)) +
-  geom_boxplot()
+happy_gdp_plot +
+  scale_x_continuous(name = 'GDP per capita', breaks = c(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5))
 ```
 
 ```{r}
-ggplot(cereal, aes(x = manufacturer, y = sugars)) +
-  geom_dotplot()
+happy_gdp_plot +
+  scale_x_continuous(name = 'GDP per capita', breaks = c(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5)) +
+  scale_y_continuous(name = 'happiness score', limits = c(2, 8))
 ```
+
+```{r}
+happy_gdp_plot +
+  scale_x_continuous(name = 'GDP per capita', breaks = c(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5)) +
+  scale_y_continuous(name = 'happiness score', limits = c(2, 8)) +
+  scale_color_viridis_d()
+```
+
+> `scale_color_viridis_d()` is a color scheme that can be distinguished by colorblind people. 
+
+## Histograms and density plots
+
+Let's switch to a different dataset: the `cereal` dataset. Let's look at the distribution of grams of sugar per serving in each type of breakfast cereal (the `sugars` column). We only have one variable now so we only need to map an `x` aesthetic. The `y` value will be computed internally by `ggplot()`.
+
+```{r}
+ggplot(data = cereal, aes(x = sugars)) +
+  geom_histogram()
+```
+
+We can modify this histogram in many ways. For instance let's reduce the number of bins to 10 from the default value of 30 to get a histogram with fewer gaps. 
+
+```{r}
+ggplot(data = cereal, aes(x = sugars)) +
+  geom_histogram(bins = 10)
+```
+
+By default, the y axis has a small gap between the highest and lowest value and the edge of the plot. That is great for scatterplots but doesn't look good for histograms. We can change this by adding a y axis scale with an `expand` argument.
+
+```{r}
+ggplot(data = cereal, aes(x = sugars)) +
+  geom_histogram(bins = 10) +
+  scale_y_continuous(expand = expansion(add = c(0, 1)))
+```
+
+I used `expansion(add = c(0, 1))` to indicate I wanted to add 0 units of padding at the low end of the axis, and 1 unit at the high end.
+
+Now I am going to change the fill color of the histogram bars, and add a title and subtitle to the plot with the `ggtitle()` function.
+
+```{r}
+sugar_hist <- ggplot(data = cereal, aes(x = sugars)) +
+  geom_histogram(bins = 10, fill = 'slateblue') +
+  scale_y_continuous(expand = expansion(add = c(0, 1))) +
+  ggtitle('Distribution of grams of sugar per serving', 'for 77 brands of breakfast cereal')
+
+sugar_hist
+```
+
+Finally we can use the `labs()` function to change the label on one or more axes without having to specify the entire scale.
+
+```{r}
+sugar_hist +
+  labs(x = 'sugar (g/serving)')
+```
+
+An alternative to the histogram is a smoothed kernel density plot. 
+
+## Facets
+
+## Altering appearance
+
+
+
+## How to get help
 
 # Conclusion
 
