@@ -12,9 +12,14 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<!-- TO DO
+- disambiguation of geom and stat
+- maybe more on stat and summary functions
+-->
+
 # Introduction
 
-This is a 
+This is a lesson introducing you to making plots with the R package **ggplot2**. The **ggplot2** package was originally developed by Hadley Wickham and is now developed and maintained by a huge team of data visualization experts. It's an elegant and powerful way of visualizing your data and works great for everything from quick exploratory plots to carefully formatted publication-quality graphics.
 
 Students should already have a beginner-level knowledge of R, including basic knowledge of functions and syntax, and awareness of how data frames in R work.
 
@@ -24,8 +29,9 @@ At the end of this course, you will know ...
 
 - what the "grammar of graphics" is and how **ggplot2** uses it
 - how to map a variable in a data frame to a graphical element in a plot using `aes`
-- how to use different `geom`s to make scatterplots, boxplots, and histograms
+- how to use different `geom`s to make scatterplots, boxplots, histograms, density plots, and barplots
 - how to add trendlines to a plot
+- how to compute summary statistics and plot them with `stat` functions
 - how to make plots for different subsets of your data using `facet`s
 - how to change the style and appearance of your plots
 
@@ -121,21 +127,21 @@ ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) +
 
 ### Modifying the plot: changing the aes
 
-If we add to or change the `aes` arguments, we will modify or change what data are used to plot. For example let's add a `color` aesthetic to the point plot to color each country's point by world region.
+If we add to or change the `aes` arguments, we will modify or change what data are used to plot. For example let's add a `color` aesthetic to the point plot to color each country's point by continent.
 
 ```{r}
-ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score, color = Region)) + 
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score, color = Continent)) + 
   geom_point() +
   geom_smooth(method = lm, se = FALSE)
 ```
 
 We automatically get a legend. However, this also automatically groups the trendline by region as well.
 
-If we have multiple `geom`s, we can add an `aes` argument to a single `geom`. For example if we want the points to be colored by region but a single overall trendline, we add `aes(color = Region)` inside `geom_point()`.
+If we have multiple `geom`s, we can add an `aes` argument to a single `geom`. For example if we want the points to be colored by continent but a single overall trendline, we add `aes(color = Continent)` inside `geom_point()`.
 
 ```{r}
 ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
-  geom_point(aes(color = Region)) +
+  geom_point(aes(color = Continent)) +
   geom_smooth(method = lm, se = FALSE)
 ```
 
@@ -143,7 +149,7 @@ If we add arguments to the `geom`s outside `aes()`, it will modify their appeara
 
 ```{r}
 ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
-  geom_point(aes(color = Region), size = 2) +
+  geom_point(aes(color = Continent), size = 2) +
   geom_smooth(method = lm, se = FALSE, color = 'black')
 ```
 
@@ -155,7 +161,7 @@ We can add a theme to the plot. Themes change the overall look of the plot.
 
 ```{r}
 happy_gdp_plot <- ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
-  geom_point(aes(color = Region), size = 2) +
+  geom_point(aes(color = Continent), size = 2) +
   geom_smooth(method = lm, se = FALSE, color = 'black')
 
 happy_gdp_plot + theme_bw()
@@ -209,6 +215,30 @@ happy_gdp_plot +
 
 > `scale_color_viridis_d()` is a color scheme that can be distinguished by colorblind people. 
 
+## Boxplots
+
+Another common plot type is the boxplot. We can plot the happiness score data on the y-axis again, but instead of a continuous x-axis, we will use continent as a discrete or categorical x-axis. A boxplot is a useful way to visualize distributions grouped by discrete categories. The function we need is `geom_boxplot()`.
+
+```{r}
+ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
+  geom_boxplot()
+```
+
+We can modify the boxplots in different ways. First let's fill them with a nice color, change the black outlines to a dark gray, and make all the lines thicker (`size = 1.5` where the default is 1).
+
+```{r}
+ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
+  geom_boxplot(fill = 'forestgreen', color = 'gray25', size = 1.5)
+```
+
+We can also modify the outlier points, here I make them bigger and 70% transparent (`alpha` ranges between 0 for fully transparent and 1 for fully opaque).
+
+```{r}
+ggplot(data = WHR, aes(x = Continent, y = Happiness.Score)) +
+  geom_boxplot(fill = 'forestgreen', color = 'gray25', size = 1.5,
+               outlier.size = 2, outlier.alpha = 0.7) 
+```
+
 ## Histograms and density plots
 
 Let's switch to a different dataset: the `cereal` dataset. Let's look at the distribution of grams of sugar per serving in each type of breakfast cereal (the `sugars` column). We only have one variable now so we only need to map an `x` aesthetic. The `y` value will be computed internally by `ggplot()`.
@@ -253,27 +283,199 @@ sugar_hist +
   labs(x = 'sugar (g/serving)')
 ```
 
-An alternative to the histogram is a smoothed kernel density plot. 
+An alternative to the histogram is a smoothed kernel density plot. Let's use the `calories` variable for that.
+
+```{r}
+ggplot(data = cereal, aes(x = calories)) +
+  stat_density()
+```
+
+> Notice we used `stat_density()`. In general, functions beginning `stat_*()` will compute some summary statistic or function based on the data and plot it.
+
+To get a less squiggly density plot, we can tweak the bandwidth parameter (the `adjust` argument) of the density smoothing algorithm. The higher the `adjust` argument is set (the default is 1), the smoother the curve.
+
+```{r}
+ggplot(data = cereal, aes(x = calories)) +
+  stat_density(adjust = 2)
+```
+
+If we just want a line instead of a filled shape we can specify the `geom` to be used for `stat_density()`. The default is `'polygon'` but we can change it to `'line'`.
+
+```{r}
+ggplot(data = cereal, aes(x = calories)) +
+  stat_density(adjust = 2, geom = 'line')
+```
+
+Let's improve the look of this plot by getting rid of the gaps on either end of the x-axis and below the 0 line on the y-axis, changing the width and color of the line, and adding a title for the plot and x-axis.
+
+```{r}
+ggplot(data = cereal, aes(x = calories)) +
+  stat_density(adjust = 2, geom = 'line', linewidth = 1.2, color = 'forestgreen') +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.02))) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0)), name = 'calories per serving') +
+  ggtitle('Distribution of calories per serving', 'for 77 brands of breakfast cereal')
+```
 
 ## Facets
 
-## Altering appearance
+One of the most useful features of **ggplot2** is the ability to easily create multiple subplots, one for each subgroup of a dataset. Let's take a subset of the `olympics` dataset to compare the athletics performance of some of the best track-and-field nations over the years: the USA, Great Britain (GBR), the Soviet Union (URS), and Jamaica (JAM).
 
+```{r}
+olympics_best <- subset(olympics, Country %in% c('USA', 'GBR', 'URS', 'JAM'))
+```
 
+Make a bar plot of the three types of medals awarded. The `geom_bar()` function can be used to compute counts within each category.
+
+```{r}
+ggplot(olympics_best, aes(x = Medal)) +
+  geom_bar(stat = 'count')
+```
+
+To make this plot more informative, let's split it up by country. We use the `facet_wrap()` function with a one-sided formula `~ Country` to make a separate plot for each country.
+
+```{r}
+ggplot(olympics_best, aes(x = Medal)) +
+  geom_bar(stat = 'count') +
+  facet_wrap(~ Country)
+```
+
+By default, all the facets have the same y-axis limits. We can make each facet have its own limits by setting `scales = 'free_y'`.
+
+```{r}
+ggplot(olympics_best, aes(x = Medal)) +
+  geom_bar(stat = 'count') +
+  facet_wrap(~ Country, scales = 'free_y')
+```
+
+We can facet in both directions using `facet_grid()` with a two-sided formula. For instance we can show the medal tally for each country by gender in a 4x2 plot.
+
+```{r}
+ggplot(olympics_best, aes(x = Medal)) +
+  geom_bar(stat = 'count') +
+  facet_grid(Country ~ Gender, scales = 'free_y')
+```
+
+Let's improve the appearance of this plot. First, you can see that the order of the medals is alphabetical (Bronze, Gold, Silver) instead of the logical Bronze, Silver, Gold. The best way to change this is by changing the underlying data before you create the plot. We will change the `Medal` column to a factor and specify the order of the factor levels. Then, when the plot is created, the bars will appear in that order.
+
+```{r}
+olympics_best$Medal <- factor(olympics_best$Medal, levels = c('Bronze', 'Silver', 'Gold'))
+
+ggplot(olympics_best, aes(x = Medal)) +
+  geom_bar(stat = 'count') +
+  facet_grid(Country ~ Gender, scales = 'free_y')
+```
+
+Now I'll add some theme elements, a title and subtitle, and a custom fill scale to fill each medal bar with the appropriate color.
+
+```{r}
+ggplot(olympics_best, aes(x = Medal, fill = Medal)) +
+  geom_bar(stat = 'count') +
+  facet_grid(Country ~ Gender, scales = 'free_y') +
+  ggtitle('Track and field medal tallies for selected countries, 1896-2014', subtitle = 'data source: The Guardian') +
+  scale_y_continuous(expand = expansion(add = c(0, 2))) +
+  scale_fill_manual(values = c(Bronze = 'chocolate4', Silver = 'gray60', Gold = 'goldenrod')) +
+  theme(legend.position = 'none',
+        strip.background = element_blank(),
+        panel.grid = element_blank())
+```
+
+> Notice I had to add `fill = Medal` to the `aes()` mapping so that the custom scale I made would be applied to fill the bars by color. The `Medal` variable is mapped to both the `x` and `fill` graphical elements. Strictly speaking this is redundant but it makes the plot look cooler!
+
+## Writing your ggplot to a file
+
+You can use the `ggsave()` function to write your plot to a file. `ggsave()` will automatically determine the file type based on the extension on the file name. It will also set the size and resolution of the image by default.
+
+```{r, eval = FALSE}
+# Not run
+ggsave('~/plots/sugar_histogram.png', sugar_hist)
+```
+
+We can specify the resolution in dpi (dots per inch) and the size of the image. By default the units are inches but we can specify other units if needed.
+
+```{r, eval = FALSE}
+# Not run
+ggsave('~/plots/sugar_histogram.png', sugar_hist, dpi = 400, height = 4, width = 4)
+ggsave('~/plots/sugar_histogram.png', sugar_hist, dpi = 400, height = 9, width = 9, units = 'cm')
+```
+
+We can use other file types such as PDF (vector graphics, so you don't supply a resolution)
+
+```{r, eval = FALSE}
+# Not run
+ggsave('~/plots/sugar_histogram.pdf', sugar_hist, height = 4, width = 4)
+```
+
+If you don't specify a plot object, it will write the last ggplot you plotted in the plotting window to the file. (This will be the last Olympics plot we made).
+
+```{r, eval = FALSE}
+ggsave('~/plots/my_plot.pdf', height = 4, width = 4)
+```
 
 ## How to get help
+
+
+## Going further
+
+### Extension packages
+
+We've only scratched the surface of **ggplot2** in this lesson. 
+
+The **ggplot2** package itself doesn't support every possible kind of data visualization. But because R packages are all open-source and anyone can contribute his or her own package, there is a very diverse "ecosystem" of extension packages people have written as add-ons to **ggplot2**. We don't have time to get into any of them in detail right now. Here are a few examples of extension packages and some bits of code showing them in action. I encourage you to explore them more!
+
+#### ggthemes
+
+This is a package that includes a bunch of themes you can add to your plot to spiff up its appearance. Here I use it to draw our sugar histogram plot in the style of *The Economist*, FiveThirtyEight.com, and the personal style of data visualization expert Edward Tufte.
+
+```{r}
+library(ggthemes)
+
+sugar_hist + theme_economist()
+sugar_hist + theme_fivethirtyeight()
+sugar_hist + theme_tufte()
+```
+
+#### gghighlight
+
+This package has functions that allow us to highlight outliers or other specific bits of our data automatically. For example let's go back to our happiness versus GDP plot and highlight the "happiest" and "saddest" countries, complete with labels.
+
+```{r}
+library(gghighlight)
+
+ggplot(data = WHR, aes(x = GDP.per.Capita, y = Happiness.Score)) + 
+  geom_point() +
+  gghighlight(Happiness.Score < 3 | Happiness.Score > 7.55, label_key = Country, label_params = list(size = 5))
+```
+
+#### ggpubr
+
+This package tries to streamline the process of formatting plots to make them publication-ready with simplified functions. For example, we can make a pretty boxplot of happiness score by continent with the raw data added as jittered points, without having to specify all the `geom`s. We can even add specific "significant" comparisons to the plot with connecting lines. Let's assume in this case that the Americas and Europe had significantly greater happiness score than Africa, but no other pairwise comparisons showed significant differences.
+
+```{r}
+library(ggpubr)
+
+ggboxplot(data = WHR, x = 'Continent', y = 'Happiness.Score', color = 'Continent', add = 'jitter',
+          palette = unname(palette.colors(4)), 
+          ylab = 'Happiness Score', ylim = c(2.5, 8.5)) +
+  geom_bracket(xmin = 'Europe', xmax = 'Africa', label = '*', y.position = 8.3, label.size = 8) +
+  geom_bracket(xmin = 'Americas', xmax = 'Africa', label = '*', y.position = 7.7, label.size = 8)
+```
+
+
+#### The list goes on ...
+
+Check out the official [ggplot2 extensions page](https://exts.ggplot2.tidyverse.org/) to browse a full list.
 
 # Conclusion
 
 What did we just learn?
 
-## Going further
+- How to make scatterplots, 
+- How to map variables in your dataset to 
+  
+### Further reading
 
-We've only scratched the surface of **ggplot2** in this lesson.
-
-- More advanced tutorials
-- Huge number of add-on packages that extend ggplot2 (show a few examples)
-  + ggthemes and other themes
-  + specialty kinds of plots like ggalluvial
-  + maps (sf integrates with ggplot2)
-  + animations
+- [ggplot2 homepage](https://ggplot2.tidyverse.org/)
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/): This is the "official" book on **ggplot2**, written by the package developers. It explains the underlying theory of grammar of graphics and thoroughly documents all the features.
+- http://www.cookbook-r.com/Graphs/
+- https://r-graph-gallery.com/ggplot2-package.html
+- [ggplot2 chapter in the book *R for Data Science*](https://r4ds.had.co.nz/graphics-for-communication.html)
