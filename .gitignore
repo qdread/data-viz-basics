@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# html
+*.html
+
+# directory generated when rendering QMD
+*_files/

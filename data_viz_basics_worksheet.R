@@ -81,7 +81,7 @@ happy_gdp_plot +
 
 # Boxplots
 
-ggplot(data = WHR, aes(...elt())) +
+ggplot(data = WHR, aes(...)) +
   ...()
 
 

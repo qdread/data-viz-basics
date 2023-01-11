@@ -15,6 +15,14 @@ execute:
 - Good for everything from quick exploratory plots to carefully formatted publication-quality graphics
 - This lesson assumes beginner-level knowledge of R (functions, data frames)
 
+---
+
+### How to follow the course
+
+- Slides and text version of lessons are online
+- Fill in code in the worksheet (replace `...` with code)
+- You can always copy and paste code from text version of lesson if you fall behind
+
 ## Learning objectives {.smaller}
 
 At the end of this course, you will know ...

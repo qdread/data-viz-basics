@@ -26,6 +26,8 @@ This is a lesson introducing you to making plots with the R package **ggplot2**.
 
 Students should already have a beginner-level knowledge of R, including basic knowledge of functions and syntax, and awareness of how data frames in R work.
 
+[Download the worksheet for this lesson here](https://quentinread.com/SEAStats/data_viz_basics/data_viz_basics_worksheet.R).
+
 ## Learning objectives
 
 At the end of this course, you will know ...
