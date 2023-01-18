@@ -3,8 +3,9 @@
 .RData
 .Ruserdata
 
-# html
+# html and pdf files from rendered RMD and QMD
 *.html
+*.pdf
 
 # directory generated when rendering QMD
 *_files/
