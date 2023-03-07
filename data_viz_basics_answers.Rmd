@@ -3,6 +3,13 @@ title: "Data Viz Basics Exercise Answers"
 output: html_document
 ---
 
+```{r, include = FALSE}
+library(ggplot2)
+cereal <- read.csv('https://github.com/qdread/data-viz-basics/raw/main/datasets/cereal.csv')
+theme_set(theme_bw())
+```
+
+
 ### Exercise 1
 
 #### 1a
@@ -47,7 +54,7 @@ ggplot(cereal, aes(x = manufacturer, y = rating)) +
 
 #### 2b
 
-```{r, fig.width = 9}
+```{r}
 ggplot(cereal, aes(x = manufacturer, y = rating)) +
   geom_boxplot(fill = 'oldlace', outlier.shape = 1)
 ```

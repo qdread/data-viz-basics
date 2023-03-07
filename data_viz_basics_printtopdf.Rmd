@@ -10,14 +10,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<!-- TO DO
-- better description of grammar of graphics
-- disambiguation of geom and stat
-- maybe more on stat and summary functions
-- add info on how to get help, such as stackoverflow or the rstudio community forums
-- add exercises
--->
-
 # Introduction
 
 This is a lesson introducing you to making plots with the R package **ggplot2**. The **ggplot2** package was originally developed by [Hadley Wickham](hadley.nz) and is now developed and maintained by a huge team of data visualization experts. It's an elegant and powerful way of visualizing your data and works great for everything from quick exploratory plots to carefully formatted publication-quality graphics.
