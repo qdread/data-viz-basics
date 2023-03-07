@@ -5,7 +5,9 @@ date: "`r Sys.Date()`"
 output: 
   html_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 3
+    toc_float: true
+    css: lessonstyle.css
 ---
 
 ```{r setup, include=FALSE}
@@ -503,4 +505,58 @@ Take the time to pat yourself on the back for making it this far. Now get out th
 
 # Exercises
 
-Coming soon!
+The example datasets we worked with in this lesson have a lot more columns that we haven't worked with yet. In these exercises, we will explore the `cereal` dataset further. The dataset has a column called `rating` which is a score on a scale from 0-100 representing how healthy the cereal is (All-Bran with Extra Fiber is the highest at 94 and Cap'n Crunch the lowest at 18). 
+
+### Exercise 1
+
+#### 1a
+
+Make a density plot showing the distribution of ratings across all 77 cereals.
+
+#### 1b
+
+Change the density plot from the previous exercise to a histogram.
+
+#### 1c
+
+Fill the histogram bars with the color of your choice. Change the y-axis of the histogram so that there is no gap between the bars and the bottom of the plot.
+
+- *Hint*: [Use `scale_y_continuous(expand = expansion(add = ...))`.]{.spoiler}
+
+### Exercise 2
+
+#### 2a
+
+Make a boxplot grouped by the column `manufacturer` to show which manufacturers produce healthier cereals.
+
+#### 2b
+
+Fill the boxplots with the color of your choice. Make the outliers into hollow circles.
+
+- *Hint*: [Use `outlier.shape = 1`.]{.spoiler}
+
+### Exercise 3
+
+#### 3a
+
+- Make a scatterplot with `sugars` on the x-axis and `rating` on the y-axis to look at whether healthier-rated cereals have more or less sugar per serving.
+
+#### 3b
+
+Include a linear trend on the scatterplot with standard error.
+
+- *Hint*: [Use `geom_smooth()` and modify the argument `method`.]{.spoiler}
+
+#### 3c
+
+Change the y-axis range on the scatterplot so that it goes from 0 to 100, with labels at 0, 25, 50, 75, and 100.
+
+- *Hint*: [Use `scale_y_continuous()`, and modify the arguments `limits` and `breaks`.]{.spoiler}
+
+#### 3d
+
+Split the scatterplot with trendline up by the `type` column to produce one scatterplot for cold cereals and one scatterplot for hot cereals. 
+
+- *Hint*: [Use `facet_wrap(~ ...)`.]{.spoiler}
+
+<b><font size="6">[Click here for answers](data_viz_basics_answers)</font></b>
